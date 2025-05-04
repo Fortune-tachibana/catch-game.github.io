@@ -1,4 +1,3 @@
-
 const urlParams = new URLSearchParams(window.location.search);
 const character = urlParams.get("character") || localStorage.getItem("selectedCharacter") || "zundamon";
 const bgmEnabled = urlParams.get("bgm") === "1" || localStorage.getItem("playBGM") === "true";
@@ -12,8 +11,6 @@ canvas.height = window.innerHeight;
 const bgm = document.getElementById("bgm");
 const seCatch = document.getElementById("se-catch");
 const seMiss = document.getElementById("se-miss");
-
-if (bgmEnabled) bgm.play().catch(() => {});
 
 let score = 0;
 let timeLeft = 60;
@@ -188,15 +185,19 @@ canvas.addEventListener("touchend", (e) => {
   player.moveLeft = false;
   player.moveRight = false;
 });
+
+// BGMをユーザーの操作で再生
 function tryPlayBGM() {
   if (bgmEnabled) {
     bgm.play().catch(() => {});
+    // イベントリスナーを削除して、再生を確実に一度だけ実行
     document.removeEventListener("keydown", tryPlayBGM);
     document.removeEventListener("touchstart", tryPlayBGM);
     document.removeEventListener("click", tryPlayBGM);
   }
 }
 
+// 最初のユーザー操作時にBGMを再生するように設定
 document.addEventListener("keydown", tryPlayBGM);
 document.addEventListener("touchstart", tryPlayBGM);
 document.addEventListener("click", tryPlayBGM);
