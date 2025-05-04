@@ -1,0 +1,39 @@
+body {
+  background: #111;
+  color: #fff;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  padding: 2em;
+}
+
+.menu h1 {
+  font-size: 2em;
+  margin-bottom: 1em;
+}
+
+.start-button {
+  padding: 10px 30px;
+  font-size: 18px;
+  background-color: #c00;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.start-button:hover {
+  background-color: #e33;
+}
+
+.ranking h2 {
+  margin-top: 2em;
+}
+
+.ranking-list {
+  list-style: none;
+  padding: 0;
+  font-size: 18px;
+}
+.ranking-list li {
+  margin: 6px 0;
+}

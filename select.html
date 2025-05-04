@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>キャラクター選択</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ffe0f0, #e0f7ff);
+      font-family: "Rounded Mplus 1c", "Yu Gothic", sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: white;
+      padding: 2em;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 600px;
+    }
+    h1 {
+      color: #ff6699;
+      margin-bottom: 1em;
+    }
+    .characters {
+      display: flex;
+      justify-content: center;
+      gap: 2em;
+      margin-bottom: 1em;
+    }
+    .characters img {
+      width: 120px;
+      height: 160px;
+      object-fit: contain;
+      border: 4px solid transparent;
+      border-radius: 12px;
+      transition: transform 0.2s, border-color 0.3s, box-shadow 0.3s;
+      cursor: pointer;
+      background-color: #fff;
+    }
+    .characters img.selected {
+      border-color: #66ccff;
+      box-shadow: 0 0 10px #66ccff;
+      transform: scale(1.1);
+    }
+    .option-group {
+      margin: 1em 0;
+    }
+    button {
+      background-color: #ff99cc;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 1em 2em;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    button:hover:not(:disabled) {
+      background-color: #ff66aa;
+      transform: scale(1.05);
+    }
+    .instructions {
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 1em;
+    }
+    .contact-link {
+      display: inline-block;
+      margin-top: 1.5em;
+      padding: 0.8em 1.5em;
+      background-color: #ffeeff;
+      color: #cc3399;
+      border-radius: 20px;
+      text-decoration: none;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .contact-link:hover {
+      background-color: #ffddf0;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>キャラクターを選んでね！</h1>
+    <div class="characters">
+      <img src="images/zundamon_right.png" id="zundamon" alt="ずんだもん">
+      <img src="images/tsumugi_right.png" id="tsumugi" alt="つむぎ">
+    </div>
+    <div class="option-group">
+      <label>
+        <input type="checkbox" id="bgmToggle" /> BGMを流す
+      </label>
+    </div>
+    <div class="instructions">
+      <p>スマホ：左右タップで移動</p>
+      <p>PC：← → キーで移動</p>
+    </div>
+    <button id="startButton" disabled>ゲームスタート</button>
+    <br>
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdAz2ifQ_uEipK11wIq8jQBeN_QTJHKDYn37Um-TeN2HR9NjA/viewform?usp=dialog" target="_blank" class="contact-link">
+      お問い合わせフォームはこちら♪
+    </a>
+  </div>
+
+  <script>
+    const zundamon = document.getElementById("zundamon");
+    const tsumugi = document.getElementById("tsumugi");
+    const startButton = document.getElementById("startButton");
+    const bgmToggle = document.getElementById("bgmToggle");
+    let selectedCharacter = "";
+
+    function selectCharacter(character) {
+      selectedCharacter = character;
+      localStorage.setItem("selectedCharacter", character);
+
+      zundamon.classList.remove("selected");
+      tsumugi.classList.remove("selected");
+
+      if (character === "zundamon") {
+        zundamon.classList.add("selected");
+      } else {
+        tsumugi.classList.add("selected");
+      }
+
+      startButton.disabled = false;
+    }
+
+    zundamon.addEventListener("click", () => selectCharacter("zundamon"));
+    tsumugi.addEventListener("click", () => selectCharacter("tsumugi"));
+
+    startButton.addEventListener("click", () => {
+      localStorage.setItem("playBGM", bgmToggle.checked);
+      window.location.href = "game.html";
+    });
+  </script>
+</body>
+</html>

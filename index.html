@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>めぐまるのゲーム置き場</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #ffe0f0, #e0f7ff);
+      font-family: "Rounded Mplus 1c", "Yu Gothic", sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
+    .center-container {
+      text-align: center;
+      background-color: white;
+      padding: 2em;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 90%;
+    }
+    h1 {
+      font-size: 2em;
+      color: #ff6699;
+      margin-bottom: 1em;
+    }
+    button {
+      background-color: #ff99cc;
+      color: white;
+      border: none;
+      border-radius: 25px;
+      padding: 1em 2em;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+      margin: 10px 0;
+    }
+    button:hover {
+      background-color: #ff66aa;
+      transform: scale(1.05);
+    }
+    .high-scores {
+      margin-top: 1em;
+      font-size: 1em;
+      color: #555;
+    }
+    .contact-button {
+      background-color: #66ccff;
+      margin-top: 1em;
+    }
+    .contact-button:hover {
+      background-color: #33bbff;
+    }
+  </style>
+</head>
+<body>
+  <div class="center-container">
+    <h1>めぐまるのゲーム置き場</h1>
+    <button onclick="location.href='select.html'">キャッチゲーム</button>
+
+
+  <div id="high-scores" style="text-align:center; margin-top: 1em;">
+    <h3>ハイスコア トップ3</h3>
+    <ul id="score-list"></ul>
+  </div>
+  
+  <script>
+    const scores = JSON.parse(localStorage.getItem("highScores") || "[]");
+    const list = document.getElementById("score-list");
+    scores.forEach((s, i) => {
+      const li = document.createElement("li");
+      li.textContent = `${i + 1}位: ${s}点`;
+      list.appendChild(li);
+    });
+  </script>
+    </div>
+
+      <button class="contact-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdAz2ifQ_uEipK11wIq8jQBeN_QTJHKDYn37Um-TeN2HR9NjA/viewform?usp=dialog', '_blank')">お問い合わせフォーム</button>
+
+</body>
+</html>

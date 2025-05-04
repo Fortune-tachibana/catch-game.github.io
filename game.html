@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>キャッチゲーム</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="game-container">
+    <div id="hud">
+      <div id="score">スコア: 0</div>
+      <div id="time">残り時間: 60</div>
+      <div id="lives">毒キャッチ可能数: 3</div>
+    </div>
+    <canvas id="gameCanvas"></canvas>
+    <div id="result" class="hidden">
+      <h2 id="result-message"></h2>
+      <p id="final-score"></p>
+      <button onclick="location.href='index.html'">トップに戻る</button>
+    </div>
+  </div>
+
+  <audio id="bgm" loop>
+    <source src="sounds/rough.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="se-catch">
+    <source src="sounds/catch.mp3" type="audio/mpeg" />
+  </audio>
+  <audio id="se-miss">
+    <source src="sounds/miss.mp3" type="audio/mpeg" />
+  </audio>
+  <script src="game.js"></script>
+</body>
+</html>
