@@ -4,9 +4,23 @@ const bgmEnabled = urlParams.get("bgm") === "1" || localStorage.getItem("playBGM
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
-ctx.imageSmoothingEnabled = false;
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+
+const dpr = window.devicePixelRatio || 1;
+
+// スタイルサイズ（表示上のサイズ）
+canvas.style.width = `${window.innerWidth}px`;
+canvas.style.height = `${window.innerHeight}px`;
+
+// 実サイズ（レンダリング解像度）
+canvas.width = window.innerWidth * dpr;
+canvas.height = window.innerHeight * dpr;
+
+// スケーリング（描画座標を論理サイズに戻す）
+ctx.scale(dpr, dpr);
+
+// 画像補間を有効化（高画質に）
+ctx.imageSmoothingEnabled = true;
+
 
 const bgm = document.getElementById("bgm");
 const seCatch = document.getElementById("se-catch");
@@ -53,8 +67,8 @@ foodImage.src = `images/food_${character === "zundamon" ? "zunda" : "curryruce"}
 obstacleImage.src = "images/obstacle.png";
 
 const player = {
-  x: canvas.width / 2,
-  y: canvas.height - 150,
+  x: window.innerWidth / 2,
+  y: window.innerHeight - 150,
   width: 100,
   height: 140,
   speed: 10,
@@ -98,7 +112,7 @@ function update() {
     if (!expressionTimeout) currentCharacterImage = characterImages.right;
   }
 
-  player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+  player.x = Math.max(0, Math.min(window.innerWidth - player.width, player.x));
 
   for (let obj of objects) obj.y += obj.speed;
 
