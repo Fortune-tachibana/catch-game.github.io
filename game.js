@@ -17,6 +17,8 @@ let timeLeft = 60;
 let poisonCount = 0;
 let objects = [];
 let expressionTimeout = null;
+let isGameOver = false;
+
 
 let backgroundImages = ["春.jpg", "夏.jpg", "秋.jpg", "冬.jpg"];
 let currentBG = 0;
@@ -84,6 +86,7 @@ function draw() {
 }
 
 function update() {
+  if (isGameOver) return; // ← 追加：終了後は何も更新しない
   if (player.moveLeft) {
     player.x -= player.speed;
     player.facing = "left";
@@ -152,6 +155,10 @@ let timer = setInterval(() => {
 }, 1000);
 
 function endGame(clear) {
+  if (isGameOver) return; // 念のため多重呼び出し防止
+  isGameOver = true;      // ← 追加：操作無効化のため
+
+  document.getElementById("result").classList.remove("hidden");
   document.getElementById("result").classList.remove("hidden");
   document.getElementById("result-message").innerText = clear ? "ゲームクリア！" : "ゲームオーバー";
   document.getElementById("final-score").innerText = `スコア: ${score}`;
@@ -164,16 +171,19 @@ function endGame(clear) {
 }
 
 document.addEventListener("keydown", (e) => {
+  if (isGameOver) return; // ← 追加
   if (e.key === "ArrowLeft") player.moveLeft = true;
   if (e.key === "ArrowRight") player.moveRight = true;
 });
 
 document.addEventListener("keyup", (e) => {
+  if (isGameOver) return; // ← 追加
   if (e.key === "ArrowLeft") player.moveLeft = false;
   if (e.key === "ArrowRight") player.moveRight = false;
 });
 
 canvas.addEventListener("touchstart", (e) => {
+  if (isGameOver) return; // ← 追加
   e.preventDefault();
   const x = e.touches[0].clientX;
   if (x < window.innerWidth / 2) player.moveLeft = true;
@@ -182,6 +192,7 @@ canvas.addEventListener("touchstart", (e) => {
 
 canvas.addEventListener("touchend", (e) => {
   e.preventDefault();
+  if (isGameOver) return; // ← 追加
   player.moveLeft = false;
   player.moveRight = false;
 });
