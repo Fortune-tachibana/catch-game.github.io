@@ -1,26 +1,18 @@
 const urlParams = new URLSearchParams(window.location.search);
 const character = urlParams.get("character") || localStorage.getItem("selectedCharacter") || "zundamon";
 const bgmEnabled = urlParams.get("bgm") === "1" || localStorage.getItem("playBGM") === "true";
+const difficulty = localStorage.getItem("difficulty") || "normal";
 
 const canvas = document.getElementById("gameCanvas");
 const ctx = canvas.getContext("2d");
 
 const dpr = window.devicePixelRatio || 1;
-
-// スタイルサイズ（表示上のサイズ）
 canvas.style.width = `${window.innerWidth}px`;
 canvas.style.height = `${window.innerHeight}px`;
-
-// 実サイズ（レンダリング解像度）
 canvas.width = window.innerWidth * dpr;
 canvas.height = window.innerHeight * dpr;
-
-// スケーリング（描画座標を論理サイズに戻す）
 ctx.scale(dpr, dpr);
-
-// 画像補間を有効化（高画質に）
 ctx.imageSmoothingEnabled = true;
-
 
 const bgm = document.getElementById("bgm");
 const seCatch = document.getElementById("se-catch");
@@ -32,7 +24,6 @@ let poisonCount = 0;
 let objects = [];
 let expressionTimeout = null;
 let isGameOver = false;
-
 
 let backgroundImages = ["春.jpg", "夏.jpg", "秋.jpg", "冬.jpg"];
 let currentBG = 0;
@@ -67,8 +58,8 @@ foodImage.src = `images/food_${character === "zundamon" ? "zunda" : "curryruce"}
 obstacleImage.src = "images/obstacle.png";
 
 const player = {
-  x: window.innerWidth / 2,
-  y: window.innerHeight - 150,
+  x: canvas.width / dpr / 2,
+  y: canvas.height / dpr - 150,
   width: 100,
   height: 140,
   speed: 10,
@@ -77,18 +68,29 @@ const player = {
   facing: "right"
 };
 
+// 難易度設定
+let spawnInterval = 800;
+let objectSpeedRange = [5, 8];
+if (difficulty === "easy") {
+  spawnInterval = 1000;
+  objectSpeedRange = [3, 6];
+} else if (difficulty === "hard") {
+  spawnInterval = 600;
+  objectSpeedRange = [7, 10];
+}
+
 function spawnObject() {
   const isPoison = Math.random() < 0.2;
   objects.push({
-    x: Math.random() * (canvas.width - 50),
+    x: Math.random() * (canvas.width / dpr - 50),
     y: -50,
     width: 50,
     height: 50,
-    speed: 5 + Math.random() * 3,
+    speed: objectSpeedRange[0] + Math.random() * (objectSpeedRange[1] - objectSpeedRange[0]),
     isPoison: isPoison
   });
 }
-setInterval(spawnObject, 800);
+setInterval(spawnObject, spawnInterval);
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -100,7 +102,8 @@ function draw() {
 }
 
 function update() {
-  if (isGameOver) return; // ← 追加：終了後は何も更新しない
+  if (isGameOver) return;
+
   if (player.moveLeft) {
     player.x -= player.speed;
     player.facing = "left";
@@ -112,7 +115,9 @@ function update() {
     if (!expressionTimeout) currentCharacterImage = characterImages.right;
   }
 
-  player.x = Math.max(0, Math.min(window.innerWidth - player.width, player.x));
+  // 左右の壁に収まるように
+  const maxX = canvas.width / dpr - player.width;
+  player.x = Math.max(0, Math.min(maxX, player.x));
 
   for (let obj of objects) obj.y += obj.speed;
 
@@ -142,7 +147,7 @@ function update() {
         currentCharacterImage = player.facing === "left" ? characterImages.left : characterImages.right;
         expressionTimeout = null;
       }, 400);
-    } else if (obj.y > canvas.height) {
+    } else if (obj.y > canvas.height / dpr) {
       objects.splice(i, 1);
     }
   }
@@ -156,7 +161,6 @@ function gameLoop() {
   update();
   requestAnimationFrame(gameLoop);
 }
-
 gameLoop();
 
 let timer = setInterval(() => {
@@ -169,10 +173,8 @@ let timer = setInterval(() => {
 }, 1000);
 
 function endGame(clear) {
-  if (isGameOver) return; // 念のため多重呼び出し防止
-  isGameOver = true;      // ← 追加：操作無効化のため
-
-  document.getElementById("result").classList.remove("hidden");
+  if (isGameOver) return;
+  isGameOver = true;
   document.getElementById("result").classList.remove("hidden");
   document.getElementById("result-message").innerText = clear ? "ゲームクリア！" : "ゲームオーバー";
   document.getElementById("final-score").innerText = `スコア: ${score}`;
@@ -185,44 +187,38 @@ function endGame(clear) {
 }
 
 document.addEventListener("keydown", (e) => {
-  if (isGameOver) return; // ← 追加
+  if (isGameOver) return;
   if (e.key === "ArrowLeft") player.moveLeft = true;
   if (e.key === "ArrowRight") player.moveRight = true;
 });
-
 document.addEventListener("keyup", (e) => {
-  if (isGameOver) return; // ← 追加
+  if (isGameOver) return;
   if (e.key === "ArrowLeft") player.moveLeft = false;
   if (e.key === "ArrowRight") player.moveRight = false;
 });
-
 canvas.addEventListener("touchstart", (e) => {
-  if (isGameOver) return; // ← 追加
+  if (isGameOver) return;
   e.preventDefault();
   const x = e.touches[0].clientX;
   if (x < window.innerWidth / 2) player.moveLeft = true;
   else player.moveRight = true;
 }, { passive: false });
-
 canvas.addEventListener("touchend", (e) => {
   e.preventDefault();
-  if (isGameOver) return; // ← 追加
+  if (isGameOver) return;
   player.moveLeft = false;
   player.moveRight = false;
 });
 
-// BGMをユーザーの操作で再生
+// BGM再生処理
 function tryPlayBGM() {
   if (bgmEnabled) {
     bgm.play().catch(() => {});
-    // イベントリスナーを削除して、再生を確実に一度だけ実行
     document.removeEventListener("keydown", tryPlayBGM);
     document.removeEventListener("touchstart", tryPlayBGM);
     document.removeEventListener("click", tryPlayBGM);
   }
 }
-
-// 最初のユーザー操作時にBGMを再生するように設定
 document.addEventListener("keydown", tryPlayBGM);
 document.addEventListener("touchstart", tryPlayBGM);
 document.addEventListener("click", tryPlayBGM);
