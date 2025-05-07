@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ゲーム設定</title>
+  <style>
+    body {
+      background: linear-gradient(to right, #fceabb, #f8b500);
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+    .section {
+      margin-bottom: 20px;
+    }
+    label, select, input[type=radio] {
+      font-size: 1.2em;
+      margin: 10px;
+    }
+    .char-img {
+      width: 120px;
+      height: auto;
+      display: none;
+    }
+    button {
+      font-size: 1.2em;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>ゲームの設定</h1>
+
+  <div class="section">
+    <label>キャラクターを選択：</label>
+    <input type="radio" name="character" value="zundamon" checked> ずんだもん
+    <input type="radio" name="character" value="tsumugi"> つむぎ
+    <br>
+    <img id="char-preview" class="char-img" src="images/zundamon_neutral.png">
+  </div>
+
+  <div class="section">
+    <label>難易度：</label>
+    <select id="difficulty">
+      <option value="easy">かんたん</option>
+      <option value="normal" selected>ふつう</option>
+      <option value="hard">むずかしい</option>
+    </select>
+  </div>
+
+  <div class="section">
+    <label>BGM：</label>
+    <input type="checkbox" id="bgm-toggle" checked> オン
+  </div>
+
+  <div class="section">
+    <h3>ルール説明</h3>
+    <p>1分間のうちに、表示されたキャラをタップしてスコアを稼ぎましょう。</p>
+    <p>笑顔は2点、ノーマルは1点、泣き顔は-1点です。</p>
+  </div>
+
+  <button onclick="startGame()">ゲームスタート</button>
+
+  <script>
+    const charPreview = document.getElementById("char-preview");
+    const radios = document.querySelectorAll("input[name='character']");
+
+    radios.forEach(r => {
+      r.addEventListener("change", () => {
+        const val = document.querySelector("input[name='character']:checked").value;
+        charPreview.src = `images/${val}_neutral.png`;
+        charPreview.style.display = "inline-block";
+      });
+    });
+
+    window.onload = () => {
+      document.querySelector("input[name='character']:checked").dispatchEvent(new Event("change"));
+    };
+
+    function startGame() {
+      const char = document.querySelector("input[name='character']:checked").value;
+      const diff = document.getElementById("difficulty").value;
+      const bgm = document.getElementById("bgm-toggle").checked;
+      const params = new URLSearchParams({ char, diff, bgm });
+      window.location.href = `whack.html?${params.toString()}`;
+    }
+  </script>
+  <script>
+    const scoreList = document.getElementById("whack-score-list");
+    const savedScores = JSON.parse(localStorage.getItem("whackScores") || "[]");
+    scoreList.innerHTML = savedScores.map(s => `<li>${s} 点</li>`).join("");
+  </script>
+  
+</body>
+</html>

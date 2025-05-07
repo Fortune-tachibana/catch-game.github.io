@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>リアクションホイッパー</title>
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #fceabb, #f8b500);
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #header {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 30px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    #game-area {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 30px auto;
+      max-width: 600px;
+    }
+    .slot {
+      width: 100%;
+      aspect-ratio: 1/1;
+      background-color: #fff7dc;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .slot img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      cursor: pointer;
+    }
+    #startBtn {
+      font-size: 18px;
+      padding: 10px 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>リアクションホイッパー</h1>
+  <div id="header">
+    <div id="time">残り時間: 60</div>
+    <div id="score">スコア: 0</div>
+  </div>
+
+  <div id="game-area">
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+    <div class="slot"></div>
+  </div>
+  <audio id="bgm" src="sounds/rough.mp3" loop></audio>
+  <div id="result" class="hidden">
+    <h2 id="result-message"></h2>
+    <p id="final-score"></p>
+    <button onclick="location.href='index.html'">トップに戻る</button>
+  </div>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedChar = urlParams.get("char") || "zundamon";
+    const difficulty = urlParams.get("diff") || "normal";
+    const bgmOn = urlParams.get("bgm") === "true";
+
+    const timeDisplay = document.getElementById("time");
+    const scoreDisplay = document.getElementById("score");
+    const slots = document.querySelectorAll(".slot");
+    const bgm = document.getElementById("bgm");
+
+    let score = 0;
+    let timeLeft = 60;
+    let gameInterval, countdownInterval;
+
+    const intervalMap = {
+      easy: 1000,
+      normal: 800,
+      hard: 500
+    };
+
+    const characters = [
+      { src: `images/${selectedChar}_neutral.png`, point: 1 },
+      { src: `images/${selectedChar}_sad.png`, point: -1 },
+      { src: `images/${selectedChar}_smile.png`, point: 2 },
+      ...(selectedChar === "zundamon"
+        ? []
+        : [{ src: "images/tsumugi_right_smile.png", point: 2 }])
+    ];
+
+    function spawnCharacter() {
+      const randomSlot = slots[Math.floor(Math.random() * slots.length)];
+      const char = characters[Math.floor(Math.random() * characters.length)];
+
+      const img = document.createElement("img");
+      img.src = char.src;
+      img.onclick = () => {
+        score += char.point;
+        scoreDisplay.innerText = `スコア: ${score}`;
+        img.remove();
+      };
+
+      randomSlot.innerHTML = "";
+      randomSlot.appendChild(img);
+
+      setTimeout(() => {
+        if (img.parentNode === randomSlot) {
+          randomSlot.innerHTML = "";
+        }
+      }, 500);
+    }
+
+    function startGame() {
+      score = 0;
+      timeLeft = 60;
+      scoreDisplay.innerText = `スコア: ${score}`;
+      timeDisplay.innerText = `残り時間: ${timeLeft}`;
+      if (bgmOn) bgm.play();
+      gameInterval = setInterval(spawnCharacter, intervalMap[difficulty]);
+      countdownInterval = setInterval(() => {
+        timeLeft--;
+        timeDisplay.innerText = `残り時間: ${timeLeft}`;
+        if (timeLeft <= 0) endGame();
+      }, 1000);
+    }
+
+    function endGame() {
+      clearInterval(gameInterval);
+      clearInterval(countdownInterval);
+      bgm.pause();
+      slots.forEach(slot => slot.innerHTML = "");
+      alert(`ゲーム終了！あなたのスコア: ${score}`);
+      saveHighScore(score);
+    }
+
+    
+
+    function saveHighScore(score) {
+      const scores = JSON.parse(localStorage.getItem("whackScores") || "[]");
+      scores.push(score);
+      scores.sort((a, b) => b - a);
+      localStorage.setItem("whackScores", JSON.stringify(scores.slice(0, 3)));
+    }
+
+    window.onload = startGame;
+  </script>
+</body>
+</html>

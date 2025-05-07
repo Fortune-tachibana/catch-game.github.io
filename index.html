@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>めぐまるのゲーム</title>
   <link rel="stylesheet" href="style.css" />
-    <link rel="icon" href="zunda.ico">
+  <link rel="icon" href="zunda.ico">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1873359578159316"
      crossorigin="anonymous"></script>
   <style>
@@ -66,11 +66,17 @@
     <h1>めぐまるのゲーム</h1>
     <button onclick="location.href='select.html'">キャッチゲーム</button>
 
-
   <div id="high-scores" style="text-align:center; margin-top: 1em;">
     <h3>ハイスコア トップ3</h3>
     <ul id="score-list"></ul>
   </div>
+
+  <button onclick="location.href='whack.html'">リアクションホイッパー</button>
+  <div id="whack-high-scores" style="text-align:center; margin-top: 1em;">
+    <h3>リアクションホイッパー ハイスコア</h3>
+    <ul id="whack-score-list"></ul>
+  </div>
+
   
   <script>
     const scores = JSON.parse(localStorage.getItem("highScores") || "[]");

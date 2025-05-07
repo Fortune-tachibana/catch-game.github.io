@@ -93,3 +93,11 @@ body, html, canvas {
 #result button:hover {
   background-color: #45a049;
 }
+.slot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: none;
+  pointer-events: auto;
+  transition: none;
+}
