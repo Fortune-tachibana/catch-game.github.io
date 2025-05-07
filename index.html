@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="icon" href="zunda.ico">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1873359578159316"
-     crossorigin="anonymous"></script>
+    crossorigin="anonymous"></script>
   <style>
     body {
       background: linear-gradient(to bottom right, #ffe0f0, #e0f7ff);
@@ -65,7 +65,6 @@
   <div class="center-container">
     <h1>めぐまるのゲーム</h1>
     <button onclick="location.href='select.html'">キャッチゲーム</button>
-
   <div id="high-scores" style="text-align:center; margin-top: 1em;">
     <h3>ハイスコア トップ3</h3>
     <ul id="score-list"></ul>
@@ -73,25 +72,42 @@
 
   <button onclick="location.href='Whack Select Setup.html'">リアクションホイッパー</button>
   <div id="whack-high-scores" style="text-align:center; margin-top: 1em;">
-    <h3>リアクションホイッパー ハイスコア</h3>
+    <h3>リアクションホイッパー ハイスコア トップ3</h3>
     <ul id="whack-score-list"></ul>
   </div>
 
-  
-  <script>
-    const scores = JSON.parse(localStorage.getItem("highScores") || "[]");
-    const list = document.getElementById("score-list");
-    scores.forEach((s, i) => {
-      const li = document.createElement("li");
-      li.textContent = `${i + 1}位: ${s}点`;
-      list.appendChild(li);
-    });
-  </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const highScoreSections = [
+          { storageKey: "highScores", listId: "score-list" }, // キャッチゲームのキー
+          { storageKey: "whackScores", listId: "whack-score-list" }, // リアクションホイッパーのキー
+        ];
+
+        function displayHighScores(storageKey, listId) {
+          const scoreList = document.getElementById(listId);
+          const scores = JSON.parse(localStorage.getItem(storageKey) || "[]");
+          scores.sort((a, b) => b - a);
+          const top3 = scores.slice(0, 3);
+
+          if (scoreList) {
+            scoreList.innerHTML = "";
+            if (top3.length > 0) {
+              const listItems = top3.map((score, index) => `<li>${index + 1}位: ${score}点</li>`).join("");
+              scoreList.innerHTML = listItems;
+            } else {
+              scoreList.innerHTML = "<p>まだハイスコアはありません。</p>";
+            }
+          }
+        }
+
+        highScoreSections.forEach(section => {
+          displayHighScores(section.storageKey, section.listId);
+        });
+      });
+    </script>
       <div id="channel-update">
         <p>チャンネル主近況: ゲームのアップデートは順調です！楽しみにして
-    </div>
-
-
+      </div>
 
 <button class="contact-button" onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSdAz2ifQ_uEipK11wIq8jQBeN_QTJHKDYn37Um-TeN2HR9NjA/viewform?usp=dialog', '_blank')">お問い合わせフォーム</button>
 

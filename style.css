@@ -97,7 +97,16 @@ body, html, canvas {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  display: none;
-  pointer-events: auto;
-  transition: none;
+  cursor: pointer;
+  display: block; /* ← ここ */
+}
+
+.slot .hitbox {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  cursor: pointer;
+  z-index: 2;
 }

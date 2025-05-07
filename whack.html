@@ -90,6 +90,13 @@
       hard: 800
     };
 
+    // 表示時間（ms） - キャラクターが見える時間
+    const durationMap = {
+      easy: 2000,
+      normal: 1000,
+      hard: 600
+    };
+
     const characters = [
       { src: `images/${selectedChar}_neutral.png`, point: 1 },
       { src: `images/${selectedChar}_sad.png`, point: -1 },
@@ -111,14 +118,13 @@
         img.remove();
       };
 
-      randomSlot.innerHTML = "";
-      randomSlot.appendChild(img);
+      randomSlot.appendChild(img); // まずキャラクターを表示
 
       setTimeout(() => {
         if (img.parentNode === randomSlot) {
-          randomSlot.innerHTML = "";
+          randomSlot.innerHTML = ""; // 一定時間後にクリア
         }
-      }, 500);
+      }, durationMap[difficulty]);
     }
 
     function startGame() {
@@ -144,15 +150,14 @@
       saveHighScore(score);
     }
 
-    
-
     function saveHighScore(score) {
-      const scores = JSON.parse(localStorage.getItem("whackScores") || "[]");
-      scores.push(score);
-      scores.sort((a, b) => b - a);
-      localStorage.setItem("whackScores", JSON.stringify(scores.slice(0, 3)));
-    }
-
+  const scores = JSON.parse(localStorage.getItem("whackScores") || "[]");
+  scores.push(score);
+  scores.sort((a, b) => b - a);
+  const top3 = scores.slice(0, 3);
+  localStorage.setItem("whackScores", JSON.stringify(top3));
+  console.log("ハイスコアを保存しました:", top3); // ← 追加
+}
     window.onload = startGame;
   </script>
 </body>

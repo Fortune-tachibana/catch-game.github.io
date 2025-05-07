@@ -25,3 +25,10 @@ document.getElementById('startGameBtn').addEventListener('click', () => {
         alert('キャラクターが選ばれていません');
     }
 });
+function saveHighScore(currentScore) {
+    const scores = JSON.parse(localStorage.getItem("whackScores") || "[]");
+    scores.push(currentScore);
+    scores.sort((a, b) => b - a);
+    const top3 = scores.slice(0, 3);
+    localStorage.setItem("whackScores", JSON.stringify(top3));
+  }
